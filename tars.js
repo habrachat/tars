@@ -1,6 +1,7 @@
 const os = require('os');
 const { spawn } = require('child_process');
 const shell = spawn(os.platform() === 'win32' ? 'bash.exe' : 'bash');
+const fs = require("fs");
 
 shell.stdout.on('data', function(data) {
   const lines = data.toString()
@@ -59,6 +60,10 @@ const throwDice = txt => {
 const match = (matches, text) => 
   Object.keys(matches).map(m => text.match(m) && matches[m](text)).filter(v => v).length === 0 && matches.default();
 
+if (!fs.existsSync("logs")) fs.mkdirSync("logs");
+const writeLogs = (text, prefix = "logs") =>
+  fs.appendFileSync(`logs/${prefix}-${new Date().toLocaleDateString("ru").replace(/\./g, "_")}.txt`, text + "\n");
+
 const onChat = msgs => {
   const msg = msgs[0];
   console.log(msg);
@@ -73,11 +78,20 @@ const onChat = msgs => {
       default: () => send("Что?"),
     }, msg.text.replace(/^(.*?)( |,)/g, "").toLowerCase())
   }
+
+  if (msg.name.toString().match(/-\> \d+ connected/g)) {
+    const names = msg.text.split(", ").map(v => v.replace(/\[\d{1,3};\d{1,3};\d{1,3}(m|)/g, "").replace(/\n|\r/g,""));
+    writeLogs(names.join(", "), "names");
+  } else {
+    writeLogs(JSON.stringify(msg));
+  }
 }
 
 const send = msg => {
   shell.stdin.write(msg + "\r\n");
   return true;
 }
+
+setInterval(() => send("/names"), 60 * 1000);
 
 shell.stdin.write('ssh tars@habr2021.podivilov.ru\n');
