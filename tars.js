@@ -34,7 +34,7 @@ const elka = [
   "......*****......",
   ".....*******.....",
   ".......***.......",
-  "С наступающим 2021, товарищи!"
+  "С наступившим 2021, товарищи!"
 ];
 
 let elkaTimestamp = new Date().getTime() - 60 * 1000;
@@ -47,7 +47,7 @@ const allowElka = () => {
 }
 
 const daysUntilNewYear = () => {
-  const countdownDate = (new Date("01.01.2021")).getTime();
+  const countdownDate = (new Date("01.01.2022")).getTime();
   const distance = countdownDate - (new Date().getTime()) - (1000 * 60 * 60 * 2);
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -81,6 +81,7 @@ const onChat = msgs => {
       ["привет|hi"]: () => send("Привет-привет!"),
       ["елка|ёлка|елку|ёлку|ылку|йолку"]: () => allowElka() && elka.map((t, i) => setTimeout(() => send(t), 1500*i)),
       ["наступающим|новым"]: () => send("С наступающим 2021, товарищи!"),
+      ["до (нового года|нг) [0-9]+ минут"]: () => send("Путин готовится"),
       ["сиськи"]: () => send("(.) (.)"),
       ["когда новый|до нового"]: () => send(`До нового года ${daysUntilNewYear()}!`),
       ["[0-9]{0,1}d[0-9]{1,2}"]: text => send(`Выпало ${throwDice(text)}`),
