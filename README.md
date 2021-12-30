@@ -1,2 +1,2 @@
 # tars
-SSH chat bot for habrachat 2021
+SSH chat bot for habra.chat

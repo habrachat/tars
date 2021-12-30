@@ -1,0 +1,5 @@
+Host habrachat
+    HostName 185.105.118.12
+    User tars
+    HostKeyAlgorithms=+ssh-rsa
+    IdentityFile ./tars.key

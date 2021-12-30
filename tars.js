@@ -1,9 +1,11 @@
 const os = require('os');
 const { spawn } = require('child_process');
-const shell = spawn(os.platform() === 'win32' ? 'bash.exe' : 'bash');
+const shell = spawn("ssh", ["-F", "gitconfig", "habrachat"], { detached: false });
 const fs = require("fs");
 
-shell.stdout.on('data', function(data) {
+const year = new Date().getFullYear() + 1;
+
+shell.stdout.on('data', data => {
   const lines = data.toString()
     .split("\r\n")
     .filter(v => v.match(":") && !v.match(/^\[0;37;90m \*/g))
@@ -34,8 +36,8 @@ const elka = [
   "......*****......",
   ".....*******.....",
   ".......***.......",
-  "С наступившим 2021, товарищи!"
-];
+  `С наступающим ${year}, товарищи!`
+].map(l => l.replace(/\*/g, "\\*"));
 
 let elkaTimestamp = new Date().getTime() - 60 * 1000;
 const allowElka = () => {
@@ -47,7 +49,7 @@ const allowElka = () => {
 }
 
 const daysUntilNewYear = () => {
-  const countdownDate = (new Date("01.01.2022")).getTime();
+  const countdownDate = (new Date("01.01." + year)).getTime();
   const distance = countdownDate - (new Date().getTime()) - (1000 * 60 * 60 * 2);
   const days = Math.floor(distance / (1000 * 60 * 60 * 24));
   const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -74,13 +76,14 @@ const writeLogs = (text, prefix = "logs") =>
   fs.appendFileSync(`logs/${prefix}-${new Date().toLocaleDateString("ru").replace(/\./g, "_")}.txt`, text + "\n");
 
 const onChat = msgs => {
+  console.log(msgs);
   const msg = msgs[0];
   console.log(msg);
   if (msg.text.toLowerCase().match(/^(тарс|tars)/g)) {
     match({
       ["привет|hi"]: () => send("Привет-привет!"),
       ["елка|ёлка|елку|ёлку|ылку|йолку"]: () => allowElka() && elka.map((t, i) => setTimeout(() => send(t), 1500*i)),
-      ["наступающим|новым"]: () => send("С наступающим 2021, товарищи!"),
+      ["наступающим|новым"]: () => send(`С наступающим ${year}, товарищи!`),
       ["до (нового года|нг) [0-9]+ минут"]: () => send("Путин готовится"),
       ["сиськи"]: () => send("(.) (.)"),
       ["когда новый|до нового"]: () => send(`До нового года ${daysUntilNewYear()}!`),
@@ -104,4 +107,7 @@ const send = msg => {
 
 setInterval(() => send("/names"), 60 * 1000);
 
-shell.stdin.write('ssh tars@habr2021.podivilov.ru\n');
+shell.on('close', () => process.exit());
+shell.on('exit', () => process.exit());
+shell.on('error', () => process.exit());
+shell.on('disconnect', () => process.exit());
