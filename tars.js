@@ -37,7 +37,7 @@ const elka = [
   "`....*******....`",
   "`......***......`",
   `С наступающим ${year}, товарищи!`
-].map(l => l.replace(/\*/g, "\\*"));
+];
 
 let elkaTimestamp = new Date().getTime() - 60 * 1000;
 const allowElka = () => {
