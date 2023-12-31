@@ -1,0 +1,5 @@
+Host habrachat
+    HostName 127.0.0.1
+    User tars
+    HostKeyAlgorithms=+ssh-ed25519
+    IdentityFile id_ed25519
