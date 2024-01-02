@@ -44,7 +44,7 @@ const allowElka = () => {
 }
 
 const daysUntilNewYear = () => {
-  const t = Date.parse('January 1 2024 00:00:00') - Date.parse(new Date());
+  const t = Date.parse('January 1 2025 00:00:00') - Date.parse(new Date());
   const seconds = Math.floor( (t/1000) % 60 );
   const minutes = Math.floor( (t/1000/60) % 60 );
   const hours = Math.floor( (t/(1000*60*60)) % 24 );
